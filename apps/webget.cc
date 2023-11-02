@@ -11,6 +11,33 @@ void get_URL( const string& host, const string& path )
 {
   cerr << "Function called: get_URL(" << host << ", " << path << ")\n";
   cerr << "Warning: get_URL() has not been implemented yet.\n";
+  // new tcpsocket 对象
+  TCPSocket tcp_socket = TCPSocket();
+
+  string buffer;
+
+  // 0-Construct by resolving a hostname and servicename
+  Address address(host,"http");
+
+  // 建立和 host + path 的连接 1-客户端发出请求 2-服务端接收并返回请求 3-客户端同意 连接建立 一个函数搞定
+  tcp_socket.connect(address);
+  
+  // 写入 linux 命令
+  tcp_socket.write("GET " + path + " HTTP/1.1\r\n");
+  tcp_socket.write("Host: " + host + "\r\n\r\n");
+  tcp_socket.write("Connection: close\r\n\r\n");
+
+  // 4-通知服务器结束连接 `SHUT_RD`, `SHUT_WR`, or `SHUT_RDWR`
+  tcp_socket.shutdown( SHUT_WR );
+
+  // 如果文件还没有结束就持续写入 file_descriptor.cc line_83
+  while(!tcp_socket.eof()){
+    tcp_socket.read(buffer);
+    cout << buffer;
+  }
+
+  // 5-理论上来说不需要的
+  // tcp_socket.close();
 }
 
 int main( int argc, char* argv[] )

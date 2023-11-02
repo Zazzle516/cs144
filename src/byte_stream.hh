@@ -13,7 +13,19 @@ class ByteStream
 protected:
   uint64_t capacity_;
   // Please add any additional state to the ByteStream here, and not to the Writer and Reader interfaces.
+  std::queue<std::string> buffer_data {};            // 管道队列
 
+  std::string_view buffer_peek {};         // 每次 peek 的大小
+
+  uint64_t nr_read {0} ;           // 累计已经读出的数量
+  uint64_t nr_write {0} ;          // 累计已经写入的数量
+
+  uint64_t total_write {0} ;         // 要写入的数据总量
+
+  bool is_error = false;             // 该过程是否出错
+  bool is_eof_write = false;         // 声明该文件的写是否已经结束
+  bool is_eof_read = false;          // 声明该文件的读是否已经结束
+  
 public:
   explicit ByteStream( uint64_t capacity );
 
